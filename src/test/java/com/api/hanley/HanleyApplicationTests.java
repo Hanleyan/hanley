@@ -1,25 +1,28 @@
 package com.api.hanley;
 
 import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.metadata.Table;
-import com.api.hanley.dao.ActionDao;
-import com.api.hanley.dao.HanziIndexDao;
-import com.api.hanley.entity.dto.Action;
-import com.api.hanley.entity.dto.HanziIndex;
+import com.alibaba.fastjson.JSON;
+import com.api.hanley.dao.*;
+import com.api.hanley.entity.dto.*;
+import com.api.hanley.entity.pojo.ReadExcelPojo;
 import com.api.hanley.service.CustomerService;
 import com.api.hanley.service.PowerService;
 import com.api.hanley.service.impl.SolrjServiceImpl;
 import com.api.hanley.util.DataUtil;
+import com.api.hanley.util.ExcelReaderFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,11 +39,19 @@ public class HanleyApplicationTests {
 	ActionDao actionDao;
 	@Autowired
 	HanziIndexDao hanziIndexDao;
+
 	@Autowired
 	PowerService powerService;
 
 	@Autowired
 	CustomerService customerService;
+
+	@Autowired
+	ProvinceMapper provinceMapper;
+	@Autowired
+	CityMapper cityMapper;
+	@Autowired
+	CountyMapper countyMapper;
 
 	@Test
 	public void contextLoads() {
@@ -216,5 +227,115 @@ public class HanleyApplicationTests {
 	@Test
 	public void addTosolr() throws Exception{
 		this.customerService.addTosolr();
+	}
+
+
+	/**
+	 * 读取excel
+	 * @throws Exception
+	 */
+	@Test
+	public void readExcel() throws Exception{
+		InputStream in = new FileInputStream("D://tool//citycode.xlsx");
+
+		List<ReadExcelPojo> list = new ArrayList<>();
+		AnalysisEventListener<ReadExcelPojo> listener = new AnalysisEventListener<ReadExcelPojo>() {
+
+			@Override
+			public void invoke(ReadExcelPojo object, AnalysisContext context) {
+				System.err.println("Row:" + context.getCurrentRowNum() + " Data:" + object);
+				list.add(object);
+			}
+
+			@Override
+			public void doAfterAllAnalysed(AnalysisContext context) {
+				System.err.println("doAfterAllAnalysed...");
+			}
+		};
+
+		ExcelReader excelReader = EasyExcelFactory.getReader(in,listener);
+
+		//第二个参数为表头行数，按照实际设置    headLineMun表格行数，代表从第几行开始
+		excelReader.read(new Sheet(1, 1, ReadExcelPojo.class));
+
+		System.out.println(JSON.toJSONString(list));
+		List<Integer> proIdList = new ArrayList<>();
+		List<Integer> cityIdList = new ArrayList<>();
+
+		for (int i = 0; i < list.size(); i++) {
+			ReadExcelPojo pojo = list.get(i);
+			if(i==0){
+				Province entity = addProvince(pojo);
+				proIdList.add(entity.getId());
+				System.out.println("第"+i+"条数据，这是 省");
+			}else{
+				String adcod = pojo.getAdcode().substring(0,2);
+
+				ReadExcelPojo lastpojo = list.get(i-1);
+				String lastadcod = lastpojo.getAdcode().substring(0,2);
+
+				if(adcod.equals(lastadcod)){   //相同省份
+					String citycod = pojo.getCitycode();
+					String lastcitycod = "";
+					if(lastpojo.getCitycode() != null){
+						lastcitycod = lastpojo.getCitycode();
+					}
+
+					if(pojo.getCitycode() == null){   //直辖市
+						Province province = addProvince(pojo);
+						proIdList.add(province.getId());
+						System.out.println("第"+i+"条数据，这是 省");
+					}else if(citycod.trim().equals(lastcitycod.trim())){   // 相同城市
+						addCounty(pojo,cityIdList.get(cityIdList.size()-1));//保存县
+						System.out.println("第"+i+"条数据，这是 县");
+					}else {
+						City entity = addCity(pojo,proIdList.get(proIdList.size()-1));
+						cityIdList.add(entity.getId());
+						System.out.println("第"+i+"条数据，这是 市");
+					}
+				}else{   //不同省份
+					if(pojo.getCitycode() != null){   //直辖市
+						Province province = addProvince(pojo);
+						proIdList.add(province.getId());
+
+						City city = addCity(pojo,proIdList.get(proIdList.size()-1));
+						cityIdList.add(city.getId());
+						System.out.println("第"+i+"条数据，这是 直辖市");
+					}else{   //普通省份 非直辖市
+						Province province = addProvince(pojo);
+						proIdList.add(province.getId());
+						System.out.println("第"+i+"条数据，这是 省");
+					}
+				}
+			}
+		}
+
+		in.close();
+	}
+
+	private Province addProvince(ReadExcelPojo pojo){
+		Province entity = new Province();
+		entity.setCn(pojo.getCn());
+		entity.setAdcode(pojo.getAdcode());
+		int a = provinceMapper.insert(entity);
+		return entity;
+	}
+	private City addCity(ReadExcelPojo pojo,int pro_id){
+		City entity = new City();
+		entity.setCn(pojo.getCn());
+		entity.setAdcode(pojo.getAdcode());
+		entity.setCitycode(pojo.getCitycode());
+		entity.setPro_id(pro_id);
+		int a = cityMapper.insert(entity);
+		return entity;
+	}
+	private County addCounty(ReadExcelPojo pojo,int city_id){
+		County entity = new County();
+		entity.setCn(pojo.getCn());
+		entity.setAdcode(pojo.getAdcode());
+		entity.setCitycode(pojo.getCitycode());
+		entity.setCity_id(city_id);
+		int a = countyMapper.insert(entity);
+		return entity;
 	}
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.hanley.dao.ProvinceMapper">
+  <resultMap id="BaseResultMap" type="com.api.hanley.entity.dto.Province">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="cn" jdbcType="VARCHAR" property="cn" />
+    <result column="adcode" jdbcType="VARCHAR" property="adcode" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from province
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.api.hanley.entity.dto.Province" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+    insert into province (id, cn, adcode
+      )
+    values (#{id,jdbcType=INTEGER}, #{cn,jdbcType=VARCHAR}, #{adcode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.api.hanley.entity.dto.Province">
+    update province
+    set cn = #{cn,jdbcType=VARCHAR},
+      adcode = #{adcode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, cn, adcode
+    from province
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, cn, adcode
+    from province
+  </select>
+</mapper>

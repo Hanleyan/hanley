@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.hanley.dao.CountyMapper">
+  <resultMap id="BaseResultMap" type="com.api.hanley.entity.dto.County">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="city_id" jdbcType="INTEGER" property="city_id" />
+    <result column="cn" jdbcType="VARCHAR" property="cn" />
+    <result column="adcode" jdbcType="VARCHAR" property="adcode" />
+    <result column="citycode" jdbcType="VARCHAR" property="citycode" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from county
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.api.hanley.entity.dto.County" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+    insert into county (id, city_id, cn, 
+      adcode, citycode)
+    values (#{id,jdbcType=INTEGER}, #{city_id,jdbcType=INTEGER}, #{cn,jdbcType=VARCHAR}, 
+      #{adcode,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.api.hanley.entity.dto.County">
+    update county
+    set city_id = #{city_id,jdbcType=INTEGER},
+      cn = #{cn,jdbcType=VARCHAR},
+      adcode = #{adcode,jdbcType=VARCHAR},
+      citycode = #{citycode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, city_id, cn, adcode, citycode
+    from county
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, city_id, cn, adcode, citycode
+    from county
+  </select>
+</mapper>
