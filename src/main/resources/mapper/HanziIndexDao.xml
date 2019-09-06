@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.api.hanley.dao.HanziIndexDao">
+    <resultMap id="hanziResultMap" type="com.api.hanley.entity.dto.HanziIndex">
+        <id     column="id"          property="id"        jdbcType="INTEGER"/>
+        <result column="hanzi"      property="hanzi"      jdbcType="VARCHAR"/>
+        <result column="createDate" property="createDate" jdbcType="VARCHAR"/>  <!--jdbcType="TIMESTAMP" 可以返回字符串合适的时间-->
+        <result column="updateTime" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="delFlag"    property="delFlag"    jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="hanzi_column_list" >
+        id,hanzi,createDate,updateTime,delFlag
+    </sql>
+
+    <select id="getHanziIndexById" resultMap="hanziResultMap" parameterType="int">
+        SELECT
+        <include refid="hanzi_column_list" />
+        FROM hanziindex WHERE 1=1 AND delFlag=0 and id = #{id}
+    </select>
+
+    <select id="getHanziIndexList" resultMap="hanziResultMap" >
+        SELECT
+        <include refid="hanzi_column_list" />
+        FROM hanziindex WHERE 1=1 AND delFlag=0
+    </select>
+
+    <!-- 添加单条数据 主键返回对象中    com.api.hanley.entity.dto.HanziIndex-->
+    <insert id="addHanziIndex" parameterType="HanziIndex" keyProperty="id" useGeneratedKeys="true" >
+        insert into action
+        (<include refid="hanzi_column_list" />)
+        VALUES (null,#{hanzi},#{createDate},#{updateTime},#{delFlag})
+    </insert>
+
+
+
+
+
+</mapper>

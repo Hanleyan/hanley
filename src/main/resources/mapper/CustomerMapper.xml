@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.hanley.dao.CustomerMapper">
+  <resultMap id="BaseResultMap" type="com.api.hanley.entity.dto.Customer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="createDate" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="customerAddress" jdbcType="VARCHAR" property="customerAddress" />
+    <result column="customerMail" jdbcType="VARCHAR" property="customerMail" />
+    <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+    <result column="customerPhone" jdbcType="VARCHAR" property="customerPhone" />
+    <result column="delFlag" jdbcType="BIT" property="delFlag" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from customer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.api.hanley.entity.dto.Customer">
+    insert into customer (id, createDate, customerAddress, 
+      customerMail, customerName, customerPhone, 
+      delFlag, updateTime)
+    values (#{id,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{customerAddress,jdbcType=VARCHAR}, 
+      #{customerMail,jdbcType=VARCHAR}, #{customerName,jdbcType=VARCHAR}, #{customerPhone,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=BIT}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.api.hanley.entity.dto.Customer">
+    update customer
+    set createDate = #{createDate,jdbcType=TIMESTAMP},
+      customerAddress = #{customerAddress,jdbcType=VARCHAR},
+      customerMail = #{customerMail,jdbcType=VARCHAR},
+      customerName = #{customerName,jdbcType=VARCHAR},
+      customerPhone = #{customerPhone,jdbcType=VARCHAR},
+      delFlag = #{delFlag,jdbcType=BIT},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, createDate, customerAddress, customerMail, customerName, customerPhone, 
+    delFlag, updateTime
+    from customer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, createDate, customerAddress, customerMail, customerName, customerPhone, 
+    delFlag, updateTime
+    from customer
+  </select>
+  <select id="selectAllLimit" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, createDate, customerAddress, customerMail, customerName, customerPhone,
+    delFlag, updateTime
+    from customer LIMIT #{l1,jdbcType=INTEGER},#{l2,jdbcType=INTEGER}
+  </select>
+</mapper>

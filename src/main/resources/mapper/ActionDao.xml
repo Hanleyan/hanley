@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.api.hanley.dao.ActionDao">
+    <resultMap id="actionResultMap" type="com.api.hanley.entity.dto.Action">
+        <id     column="id"          property="id"         jdbcType="INTEGER"/>
+        <result column="action"      property="action"     jdbcType="VARCHAR"/>
+        <result column="action_path" property="actionPath" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>  <!--jdbcType="TIMESTAMP" 可以返回字符串合适的时间-->
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="del_flag"    property="delFlag"    jdbcType="BOOLEAN"/>
+    </resultMap>
+    <sql id="action_column_list" >
+        id,action,action_path,create_time,update_time,del_flag
+    </sql>
+    
+    <select id="getActionById" resultMap="actionResultMap" parameterType="int">
+        SELECT
+        <include refid="action_column_list" />
+        FROM action WHERE 1=1 AND del_flag=0 and id = #{id}
+    </select>
+
+    <select id="getActionList" resultMap="actionResultMap" >
+        SELECT
+        <include refid="action_column_list" />
+        FROM action WHERE 1=1 AND del_flag=0
+    </select>
+
+    <!-- 添加单条数据 主键返回对象中    com.api.hanley.entity.dto.Action-->
+    <insert id="addAction" parameterType="Action" keyProperty="id" useGeneratedKeys="true" >
+        insert into action
+        (<include refid="action_column_list" />)
+        VALUES (null,#{action},#{actionPath},#{createTime},#{updateTime},#{delFlag})
+    </insert>
+
+
+
+
+
+</mapper>

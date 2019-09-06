@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+        <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!--<file>/home/nancy/rmLog/rmSpringBoot.log</file>-->
+            <!-- 设置滚动策略 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"> <!-- TimeBasedRollingPolicy SizeAndTimeBasedRollingPolicy -->
+                <!--设置日志命名模式-->
+                <fileNamePattern>/home/hanley/hanleyLog/hanleySpringBoot.%d{yyyy-MM-dd}.%i.log</fileNamePattern> <!-- %d、%i是不可缺少的。-->
+                <!--最多保留30天log-->
+                <maxHistory>30</maxHistory>
+
+                <maxFileSize>10MB</maxFileSize>
+
+            </rollingPolicy>
+            <!-- 超过10MB时，触发滚动策略 -->
+            <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <maxFileSize>10MB</maxFileSize>
+            </triggeringPolicy>-->
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread]  %-5level  %logger{50} - %msg%n</pattern>  <!--%X{invokeNo} %logger{40}-->
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="infoAppender"/>
+        </root>
+</configuration> 
