@@ -1,7 +1,10 @@
-package com.api.hanley.util;
+package com.api.hanley.util.rabbitmqDemo;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author hanley
@@ -10,17 +13,17 @@ import com.rabbitmq.client.ConnectionFactory;
  */
 public class ConnectionRabbitMqUtil {
 
-    public static Connection getConnection() throws Exception{
+    public static Connection getConnection() throws IOException,TimeoutException {
         //定义连接工厂
         ConnectionFactory connectionFactory = new ConnectionFactory();
 
         //设置服务地址
-        connectionFactory.setHost("39.106.151.178");
+        connectionFactory.setHost("127.0.0.1");
         //端口
         connectionFactory.setPort(5672);
 
         //设置账户信息
-        connectionFactory.setVirtualHost("/hanley");
+        connectionFactory.setVirtualHost("/vhost_hanley"); //virtual host 相当于rabbit的数据库
         connectionFactory.setUsername("hanley");
         connectionFactory.setPassword("hanley");
 

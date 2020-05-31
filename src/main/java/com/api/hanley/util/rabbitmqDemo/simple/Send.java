@@ -1,6 +1,6 @@
-package com.api.hanley.util.rabbitmqDemo;
+package com.api.hanley.util.rabbitmqDemo.simple;
 
-import com.api.hanley.util.ConnectionRabbitMqUtil;
+import com.api.hanley.util.rabbitmqDemo.ConnectionRabbitMqUtil;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
@@ -10,6 +10,13 @@ import com.rabbitmq.client.Connection;
  * 风萧萧兮易水寒
  */
 public class Send {
+
+    /**
+     *  简单模式
+     *
+     *  P-------- Queue -------C
+     *
+     */
     private final static String QUEUE_NAME = "test_hanley";
 
     public static void main(String[] args)throws Exception {
@@ -26,6 +33,7 @@ public class Send {
         String msg = "HELLO WORLD!";
         byte[] bytes = new byte[2014];
 
+        //发布消息
         channel.basicPublish("",QUEUE_NAME,null,msg.getBytes());
         System.out.println("[X] send '"+msg+"' ");
 

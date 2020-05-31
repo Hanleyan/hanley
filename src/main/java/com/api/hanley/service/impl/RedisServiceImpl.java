@@ -1,8 +1,10 @@
-/*
+
 package com.api.hanley.service.impl;
 
 import com.api.hanley.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -17,18 +19,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-*/
+
 /**
  * @author hanley
  * @date 2019/4/25 13:47
  * 风萧萧兮易水寒
- *//*
+ */
 
-@Slf4j
+//@Slf4j
 @Service("redisService")
 public class RedisServiceImpl implements RedisService {
 
-    */
+    private Logger log = LoggerFactory.getLogger(RedisServiceImpl.class);
+
 /*
         redisTemplate.opsForList();//操作list
         redisTemplate.opsForValue();//操作字符串
@@ -37,10 +40,10 @@ public class RedisServiceImpl implements RedisService {
         redisTemplate.opsForHash();//操作hash
         redisTemplate.opsForSet();//操作set
         redisTemplate.opsForZSet();//操作有序set
-    *//*
-
-
     */
+
+
+
 /**
      * RedisTemplate是Spring对于Redis的封装。
      * 如上所示，RedisTemplate中定义了对5种数据结构操作。
@@ -58,10 +61,10 @@ public class RedisServiceImpl implements RedisService {
      但是注意一点，由于采用了String的序列化策略，所以只接受value值类型为String的参数。
      如果像我一样传递了Integer类型的参数，直接使用toString()方法存入缓存。
      *
-     * *//*
+     * */
 
 
-    */
+
 /**
      * redis主要功能:
          存储登录的用户
@@ -76,7 +79,7 @@ public class RedisServiceImpl implements RedisService {
          用zset存储最近被浏览的item
          用zset存储用户最近浏览的item
          用map存储用户的购物车
-     *//*
+     */
 
 
     private RedisTemplate<String,Object> redisTemplate;
@@ -93,13 +96,13 @@ public class RedisServiceImpl implements RedisService {
     }
 
 
-    */
+
 /**
      * 写入redis缓存
      * @param key 键
      * @param value 值
      * @return boolean
-     *//*
+     */
 
     @Override
     public boolean set(String key, Object value) {
@@ -115,14 +118,14 @@ public class RedisServiceImpl implements RedisService {
         return  b;
     }
 
-    */
+
 /**
      * 写入缓存设置时效时间
      * @param key 键
      * @param value 值
      * @param expireTime 时效时间
      * @return boolean
-     *//*
+     */
 
     @Override
     public boolean set(final String key, Object value, long expireTime) {
@@ -139,12 +142,12 @@ public class RedisServiceImpl implements RedisService {
         return b;
     }
 
-    */
+
 /**
      * 读取缓存
      * @param key key
      * @return Object
-     *//*
+     */
 
     @Override
     public Object get(String key) {
@@ -152,11 +155,11 @@ public class RedisServiceImpl implements RedisService {
         return vo.get(key);
     }
 
-    */
+
 /**
      * 批量删除对应的value
      * @param keys keys
-     *//*
+     */
 
     @Override
     public void remove(final String... keys) {
@@ -165,11 +168,11 @@ public class RedisServiceImpl implements RedisService {
         }
     }
 
-    */
+
 /**
      * 删除对应的value
      * @param key key
-     *//*
+     */
 
     @Override
     public void remove(final String key) {
@@ -178,11 +181,11 @@ public class RedisServiceImpl implements RedisService {
         }
     }
 
-    */
+
 /**
      * 批量删除key
      * @param pattern pattern
-     *//*
+     */
 
     @Override
     public void removePattern(String pattern) {
@@ -192,25 +195,25 @@ public class RedisServiceImpl implements RedisService {
         }
     }
 
-    */
+
 /**
      * 判断缓存中是否有对应的value
      * @param key key
      * @return boolean
-     *//*
+     */
 
     @Override
     public boolean exists(final String key) {
         return redisTemplate.hasKey(key);
     }
 
-    */
+
 /**
      * 哈希 添加
      * @param key key
      * @param hashKey hashKey
      * @param value value
-     *//*
+     */
 
     @Override
     public void hmSet(String key, Object hashKey, Object value) {
@@ -218,13 +221,13 @@ public class RedisServiceImpl implements RedisService {
         hash.put(key,hashKey,value);
     }
 
-    */
+
 /**
      * 哈希获取数据
      * @param key key
      * @param hashKey hashKey
      * @return Object
-     *//*
+     */
 
     @Override
     public Object hmGet(String key, Object hashKey) {
@@ -232,12 +235,12 @@ public class RedisServiceImpl implements RedisService {
         return hashOperations.get(key,hashKey);
     }
 
-    */
+
 /**
      * 列表添加
      * @param k k
      * @param v v
-     *//*
+     */
 
     @Override
     public void lPush(String k, Object v) {
@@ -245,14 +248,14 @@ public class RedisServiceImpl implements RedisService {
         listOperations.rightPush(k,v);
     }
 
-    */
+
 /**
      * 列表获取
      * @param k k
      * @param l l
      * @param l1 l1
      * @return List
-     *//*
+     */
 
     @Override
     public List<Object> lRange(String k, long l, long l1) {
@@ -260,12 +263,12 @@ public class RedisServiceImpl implements RedisService {
         return listOperations.range(k,l,l1);
     }
 
-    */
+
 /**
      * 集合添加
      * @param key key
      * @param value value
-     *//*
+     */
 
     @Override
     public void add(String key, Object value) {
@@ -273,12 +276,12 @@ public class RedisServiceImpl implements RedisService {
         setOperations.add(key,value);
     }
 
-    */
+
 /**
      * 集合获取
      * @param key key
      * @return Set
-     *//*
+     */
 
     @Override
     public Set<Object> setMembers(String key) {
@@ -287,13 +290,13 @@ public class RedisServiceImpl implements RedisService {
     }
 
 
-    */
+
 /**
      * 有序集合添加
      * @param key key
      * @param value value
      * @param scoure scoure
-     *//*
+     */
 
     @Override
     public void zAdd(String key, Object value, double scoure) {
@@ -302,14 +305,14 @@ public class RedisServiceImpl implements RedisService {
 
     }
 
-    */
+
 /**
      * 有序集合获取
      * @param key key
      * @param scoure scoure
      * @param scoure1 scoure1
      * @return Set
-     *//*
+     */
 
     @Override
     public Set<Object> rangeByScore(String key, double scoure, double scoure1) {
@@ -319,4 +322,4 @@ public class RedisServiceImpl implements RedisService {
 
 
 }
-*/
+

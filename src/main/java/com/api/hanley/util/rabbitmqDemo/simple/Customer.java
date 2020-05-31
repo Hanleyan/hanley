@@ -1,6 +1,6 @@
-package com.api.hanley.util.rabbitmqDemo;
+package com.api.hanley.util.rabbitmqDemo.simple;
 
-import com.api.hanley.util.ConnectionRabbitMqUtil;
+import com.api.hanley.util.rabbitmqDemo.ConnectionRabbitMqUtil;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
@@ -27,9 +27,10 @@ public class Customer {
         //声明队列
         channel.queueDeclare(QUEUE_NAME,false,false,false,null);
 
-        //定义队列的消费者
+        //定义队列的消费者 老版本
         //QueueingConsumer consumer = new QueueingConsumer();
-        //监听队列
+
+        //监听队列 新版本
         channel.basicConsume(QUEUE_NAME,false,new DefaultConsumer(channel){
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String routingKey = envelope.getRoutingKey();
